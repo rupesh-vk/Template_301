@@ -3,11 +3,7 @@
 Path: `beat-1-sandbox/unit-2/reproduction.md`
 
 Record of your claim and reproduction on the issue you chose in Unit 1, and of the
-evaluation runs that produced `eval-run.txt`. This file is graded at the path above; a copy
-kept anywhere else in the repository is not read.
-
-Complete every labelled field below. Each is graded on its own; content placed under the wrong
-label is not graded.
+evaluation runs that produced `eval-run.txt`.
 
 ---
 
@@ -23,7 +19,7 @@ rupesh-vk
 
 **Claim comment**
 
-<[!-- https://github.com/codepath/pathreview-ai301-fa26-s1/issues/54#issuecomment-5987374021 -->
+https://github.com/codepath/pathreview-ai301-fa26-s1/issues/54#issuecomment-5987374021
 
 I'd like to work on this one. I'm new to this project, so to set expectations up front: I'm claiming the investigation, not a fix.
 
@@ -33,12 +29,77 @@ I'll report back with what I find either way, including if I can't reproduce it,
 
 **Reproduction comment**
 
-<!-- TODO: paste the comment permalink and the posted repro text here once posted -->
+https://github.com/codepath/pathreview-ai301-fa26-s1/issues/54#issuecomment-5987632306
+
+Reproduced on the current `main`. Details below so this can be re-run.
+
+**Environment**
+
+- macOS 26.5.2 (arm64)
+- Python 3.11.4
+- `codepath/pathreview-ai301-fa26-s1` at commit `f89c06f`
+- pytest 8.4.1
+
+**Steps**
+
+1. Clone the repo and check out `f89c06f`.
+
+2. The five tests covering this path are already marked `xfail` against this issue, so run one with `--runxfail` to see the actual assertion rather than a skipped mark:
+
+        python3 -m pytest tests/unit/test_resume_parser.py::TestResumeParser::test_detect_sections --runxfail -v
+
+3. To isolate the whitespace as the variable, run the same text through `_detect_sections()` twice — once as written, once with each line stripped:
+
+        from ingestion.parsers.resume_parser import ResumeParser
+
+        p = ResumeParser()
+
+        indented = """
+            Experience:
+            Senior Developer at TechCorp
+
+            Education:
+            BS Computer Science
+
+            Skills: Python, JavaScript
+        """
+
+        flush = "\n".join(line.strip() for line in indented.splitlines())
+
+        print("indented ->", p._detect_sections(indented))
+        print("flush    ->", p._detect_sections(flush))
+
+**Observed**
+
+Step 2 fails on the length assertion, with the detected-section list empty:
+
+        tests/unit/test_resume_parser.py::TestResumeParser::test_detect_sections FAILED
+
+                sections = parser._detect_sections(text)
+
+                assert isinstance(sections, list)
+        >       assert len(sections) > 0
+        E       assert 0 > 0
+        E        +  where 0 = len([])
+
+        tests/unit/test_resume_parser.py:152: AssertionError
+        =========================== short test summary info ============================
+        FAILED tests/unit/test_resume_parser.py::TestResumeParser::test_detect_sections - assert 0 > 0
+
+Step 3 shows the same input succeeding once the indentation is removed, and nothing else changed:
+
+        indented -> []
+        flush    -> ['Skills', 'Experience', 'Education']
+
+**What this does and does not establish**
+
+It establishes that `_detect_sections()` returns an empty list for text whose section headings carry leading whitespace, and returns `['Skills', 'Experience', 'Education']` for the same text with that whitespace stripped. That matches the behaviour described in the issue, and leading whitespace is the only difference between the two runs above.
+
+It does not establish the cause. My current guess is the `^` anchor in the section-header matching inside `_detect_sections()`, since that would explain why a heading stops matching once it is no longer at the start of the line — but I have not confirmed that by reading the matching code, and I am not claiming it as a finding.
+
+Four further tests in the same file (`test_parse_single_column_resume_text`, `test_parse_resume_no_work_experience`, `test_parse_markdown_resume`, `test_strip_markdown_syntax`) carry the same `xfail` marker for this issue; I ran only `test_detect_sections` with `--runxfail`, so I have not verified the other four fail for this same reason.
 
 ## Eval iterations
-
-Answer all four sections. Quote source text directly; paraphrase does not satisfy these
-fields.
 
 **Run history**
 
@@ -53,9 +114,7 @@ I made no revisions after the full run, so there were no `--only` re-runs and no
 
 `pkg-05` (source: conda/conda#16543). My rubric returned **reject**; the gold label is **accept**. The run's row reads:
 
-```text
-pkg-05  accept  reject   NO     failed: Steps re-runnable by a stranger
-```
+        pkg-05  accept  reject   NO     failed: Steps re-runnable by a stranger
 
 Only that one check failed. The environment record was complete (conda 26.7.0, Python 3.12.7, macOS 15.5 osx-arm64, libmamba solver), the artifact showed the issue's own behaviour rather than an adjacent one, the words claimed no more than the artifact showed, and conda's `CONTRIBUTING.md` "Generative AI" section states no disclosure requirement the comments fail to meet.
 
