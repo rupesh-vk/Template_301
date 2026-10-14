@@ -1,0 +1,17 @@
+# Rubric: is this pull request ready to submit?
+
+## Checks
+
+| Check | Evidence | Pass condition | Weight |
+|---|---|---|---|
+| Diff follows the plan or disclosed deviations | Plan scope, boundaries, approach, and deviations beside all diff hunks and description scope statements. | Each change serves the issue and is accounted for by the plan or an explicit explanation of what changed and why. Planned work omitted or narrowed is disclosed rather than silently claimed complete. Honest, explained partial delivery passes; silent additions or omissions fail. | required |
+| Description matches the delivered change | Title and description claims beside diff and test evidence. | Claims about behavior, scope, compatibility, and validation are supported by the artifacts. Limitations and failures are honestly stated. A confident claim contradicted by the diff or evidence fails. | required |
+| Repro and planned verification show observable results | Plan test plan and original repro beside candidate test evidence. | Evidence identifies the relevant input or command and observed before/after behavior or a regression assertion with its result. It establishes what the change actually does on the reported path. Equivalent verification is explained. Missing planned checks or unsuccessful outcomes may pass when explicitly disclosed with a concrete reason and no unsupported success claim; generic “tests pass” without observable proof fails. | required |
+| Repository checks are accounted for | Required checks in repo facts or contributing guide beside test outputs and description. | Required checks have identifiable commands and outcomes, including failed results. A check not run has an explicit concrete limitation and reason, and is not claimed passed. Silent omission, invented results, or an unexplained “not run” fails. Do not require checks the repository never asks for. | required |
+| Diff is focused and reviewable | Complete unified diff and commit list beside issue and plan. | The fix is visible without unrelated changes, debug output, dead or commented-out code, accidental files, or unnecessary formatting churn. Necessary supporting edits are tied to this fix. Explaining an unrelated cleanup does not make it necessary. Commit count and message polish alone do not fail. | required |
+| Stated standards and reviewer requests are met | Repo template, contribution and AI policy, thread requests beside PR title and description. | Every applicable stated template section has meaningful content or a justified N/A; issue linkage and required AI disclosure are present, and relevant maintainer directions are addressed. In live course mode include the course-required AI disclosure in Notes for Reviewers. Eval requires only asks in the bundle, never live course conventions. Silence about a convention is not a requirement. | required |
+| Reviewer can understand the change | Title and description read alone. | A reader learns the concrete change, its reason, and material limitations without deciphering generic boilerplate. | preferred |
+
+## Verdict rule
+
+Accept only if every required check passes. Any required fail or unclear produces reject. Report preferred grades but never let them change the verdict. An honestly disclosed shortfall is judged by each pass condition, not automatically rejected for being incomplete. Missing evidence is fail; unclear means present evidence supports conflicting readings.

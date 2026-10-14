@@ -1,0 +1,60 @@
+Codex review using the installed pr-precheck components, in live mode.
+This review is not a Claude CLI result. The CLI attempt failed at the account spending limit; its exact message is preserved in live-precheck-claude-attempt.txt.
+
+Scope: issue and target repository match scope.md. The scoped repo is populated.
+Procedure: read issue/repro, repository asks/thread, plan, every committed diff hunk, captured outputs, and final draft.
+
+PASS — Diff follows the plan or disclosed deviations: All five regex edits, five xfail removals, and the comparison test map to the posted plan; Deviations records the two parametrized cases added in Unit 4.
+PASS — Description matches the delivered change: The description names both source behaviors and test changes, discloses Unicode/nested-heading limits, and does not claim passing integration or completed Claude live execution.
+PASS — Repro and planned verification show observable results: Before main gives indented [] and a failing test; after detects the expected section names and passes all 12 parser cases. The new cases fail on baseline production code.
+PASS — Repository checks are accounted for: Full captured outputs show 382 passed/48 xfailed, lint pass, mypy 76 files pass, black 110 unchanged, frontend 18 passed; empty integration and pending pre-opening CI are disclosed.
+PASS — Diff is focused and reviewable: git diff main...HEAD contains only ingestion/parsers/resume_parser.py and tests/unit/test_resume_parser.py, with no debug or unrelated hunks.
+PASS — Stated standards and reviewer requests are met: All six template sections have concrete content; Closes #54 and AI disclosure are present; branch names issue 54; no maintainer direction in the captured thread contradicts the fix.
+PASS — Reviewer can understand the change: Title names indented resume headings; Summary explains the empty-list defect and changed handling, and Notes states the limitations.
+
+Voice notes: no broken outgoing-text rule identified. Actual outputs, limitations, AI use, and the unsuccessful Claude attempt are disclosed; no ETA or unsupported fix promise appears.
+Weakest required evidence: integration behavior is not exercised because the suite has no tests. The output and course exception are explicit, so the rubric’s accounting condition passes.
+
+```json
+{
+  "item": "https://github.com/codepath/pathreview-ai301-fa26-s1/issues/54",
+  "checks": [
+    {
+      "name": "Diff follows the plan or disclosed deviations",
+      "grade": "pass",
+      "evidence": "All five regex edits, five xfail removals, and the comparison test map to the posted plan; Deviations records the two parametrized cases added in Unit 4."
+    },
+    {
+      "name": "Description matches the delivered change",
+      "grade": "pass",
+      "evidence": "The description names both source behaviors and test changes, discloses Unicode/nested-heading limits, and does not claim passing integration or completed Claude live execution."
+    },
+    {
+      "name": "Repro and planned verification show observable results",
+      "grade": "pass",
+      "evidence": "Before main gives indented [] and a failing test; after detects the expected section names and passes all 12 parser cases. The new cases fail on baseline production code."
+    },
+    {
+      "name": "Repository checks are accounted for",
+      "grade": "pass",
+      "evidence": "Full captured outputs show 382 passed/48 xfailed, lint pass, mypy 76 files pass, black 110 unchanged, frontend 18 passed; empty integration and pending pre-opening CI are disclosed."
+    },
+    {
+      "name": "Diff is focused and reviewable",
+      "grade": "pass",
+      "evidence": "git diff main...HEAD contains only ingestion/parsers/resume_parser.py and tests/unit/test_resume_parser.py, with no debug or unrelated hunks."
+    },
+    {
+      "name": "Stated standards and reviewer requests are met",
+      "grade": "pass",
+      "evidence": "All six template sections have concrete content; Closes #54 and AI disclosure are present; branch names issue 54; no maintainer direction in the captured thread contradicts the fix."
+    },
+    {
+      "name": "Reviewer can understand the change",
+      "grade": "pass",
+      "evidence": "Title names indented resume headings; Summary explains the empty-list defect and changed handling, and Notes states the limitations."
+    }
+  ],
+  "verdict": "accept"
+}
+```
