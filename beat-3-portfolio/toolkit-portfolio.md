@@ -1,118 +1,48 @@
-# Toolkit Portfolio
+# Adding Australian Suzuki motorcycle dealers to AllThePlaces
 
-Path: `beat-3-portfolio/toolkit-portfolio.md`
+## Overview
 
-This file is Assignment 6, and it is graded at the path above; a copy kept anywhere else in
-the repository is not read. It has been waiting here since you created the repo in unit 1;
-unit 9 is when you write it.
+I opened a [pull request](https://github.com/alltheplaces/alltheplaces/pull/20538) to add Australian Suzuki motorcycle dealers to AllThePlaces, an open source project that collects location data. I worked with OpenAI Codex to investigate the data source, prepare a Python importer, and validate the results. The importer returned 89 dealers. As of November 18, the PR is still open. A reviewer confirmed the count and requested one address-field correction that remains outstanding.
 
-**Only this page is read.** Your `tools/` folders and your installed skill folders are never
-opened, so every piece of evidence you want seen has to live inline here: an output excerpt,
-a before/after pair, a dated commit reference.
+## What happened
 
-**Write every sentence yourself.** AI may gather diffs, dates and excerpts for you; it does
-not draft entries.
+I chose this issue because I am comfortable with Python and wanted a contribution with a clear result I could check. The project already had an importer for Suzuki cars, but the motorcycle dealers used a different data source. I focused on adding that missing coverage.
 
-**Keep every section header below under its exact name** — Featured Tools, Inventory, The
-Arc, and Limitations and What's Next. Feature three or four tools, each in the entry shape
-shown below; give every other tool one inventory line.
+The importer uses the project's existing JSON helper to turn the dealer API response into location records. It adds the Suzuki brand and motorcycle-shop category. It marks motorcycle repair only when the source lists that service, rather than assuming every dealer offers it.
 
-**Some lines below are labelled, and the label is how they are read.** Three places on this
-page use a `Label: your words` shape — the arc's beats, the tool-limits list, and nothing
-else. Keep those labels exactly as written, one per line, and never delete a labelled line:
-where you have nothing to put after a label, write `none` and move on. A deleted label reads
-as a deleted answer.
+The API request asks for up to 200 records. The implementation includes this check so a response reaching that limit does not silently look complete:
 
-**Before you finish**, replace every `[bracketed prompt]` with your own words, then delete
-the unused `[Tool name]` entry stub, its copy-me sentence, and the prompt sentences under
-each header. A leftover bracketed prompt reads as unfilled.
+```python
+if len(features) >= 200:
+    raise ValueError("Suzuki dealer search reached its result limit")
+```
 
-**Student:** [Student name]
+The crawl produced 89 records. Validation compared the exported IDs, names, coordinates, and addresses with the source data. The relevant existing tests also passed. These excerpts come from the recorded test and crawl output:
 
-## Featured Tools
+```text
+3 passed, 1 warning in 15.54s
+'item_scraped_count': 89,
+'finish_reason': 'finished',
+```
 
-Three or four tools, presented in depth. Open with a few sentences
-on why you chose these.
+One change happened while preparing the PR description. My first version described the validation as a “Live crawl.” The pre-PR check flagged that wording because the final validation run used cached data. I changed it to “Cached validation crawl” and explained the earlier network fetch separately. I also clarified that the current result was 89 dealers, while the original issue referred to 95. I added the raw output and source examples to support those claims.
 
-Full credit asks the featured set to show real change: **at least two** of your featured
-entries should show a tool that visibly moved through use. An honest entry for a tool that
-barely changed — saying so, dating what did happen, and giving the reason — earns the solid
-middle tier and never fails you.
+That revision mattered because the description needed to match what actually ran. The final check reported:
 
-Each tool's honest limit is not written here. It goes in the tool-limits list at the
-bottom of this page, one line per featured tool, so that the limits sit together and can be
-read as a set.
+```text
+ship-gate: PASS. add-suzuki-motorcycles-au passed your manifest's checks and your pr-precheck.
+```
 
-[Why these tools, in your own words.]
+After the PR opened, automated runs reported 89 records. On November 15, a reviewer independently ran the importer and wrote:
 
-Copy the entry shape below once per featured tool and fill it there.
+> I ran the spider and got 89 dealers in every state and territory. One thing to change below.
 
-**[Tool name]**
+The [review](https://github.com/alltheplaces/alltheplaces/pull/20538#discussion_r4577983819) identified an address-mapping problem. The API provides a full address, including suburb, state, and postcode. My implementation moved that value into the street-address field. The reviewer requested removing that assignment so the full address stays in its appropriate field. This was useful external confirmation of the output, along with a specific correction to make. It was not approval or a merge.
 
-**What it is, and the judgment hole I wrote:** [what the tool does,
-and the part of it that is your judgment: the rubric, strategy,
-guide, manifest, or playbook you wrote.]
+## Limitations and what's next
 
-**How it evolved, dated:** [the changes that made it yours, each
-with its date and the friction that drove it; your weekly Toolkit
-entries are the source.]
+The address correction is still pending. My next step is to preserve the full-address field, rerun validation, and update the PR before responding to the review.
 
-**Evidence:** [show, don't claim: an output excerpt, a before/after
-pair, or a dated commit reference, inline here. Draw it from your real
-term work where you can - a catch this tool actually made, a
-before/after from your own repo or PR - which is graded separately from
-whether an artifact is present at all. A short, telling excerpt beats a
-pasted transcript.]
+The source does not provide opening hours, and 28 records had unknown service information. I left those details unknown. The 200-record safeguard was inspected but not separately tested with a response at the limit.
 
-## Inventory
-
-One line each for the rest of the toolkit: what it is and where it
-stands (one bullet per tool; a compact sentence or two is fine).
-
-- [Tool name: one line.]
-
-## The Arc
-
-The story of the toolkit in order: friction, change, result, dated.
-Your weekly Toolkit entries are the source; read your own record and
-tell it oldest first.
-
-Write one block per beat, in the shape below, oldest first. Keep all four labels on every
-beat, each on its own line. The `Result:` line is what the beat was for: it says what
-happened *after* the change, which is not the same sentence as the change itself. If a beat
-never reached a result, write `Result: none` — an honest beat that did not land still counts
-fully as a beat.
-
-Full credit asks for **at least two** beats whose `Result:` line names something that
-actually happened afterwards. A beat about something that did not work counts fully as a
-beat, and when the work happened never moves this score.
-
-**Beat 1**
-Date: [a date, or a month and year]
-Friction: [what was going wrong, and how you noticed]
-Change: [what you changed because of it]
-Result: [what happened afterwards, or the word none]
-
-**Beat 2**
-Date: [a date, or a month and year]
-Friction: [what was going wrong, and how you noticed]
-Change: [what you changed because of it]
-Result: [what happened afterwards, or the word none]
-
-Copy the beat shape above for as many beats as your term had.
-
-## Limitations and What's Next
-
-What the toolkit as a whole still does not do, and what you would
-build or change next. Write this section last; it will be better
-after the rest.
-
-[The honest limits, and what comes next, in your own sentences.]
-
-**Tool limits.** One line per featured tool, in the same order as the entries above, naming
-where that tool still stops or what it still gets wrong. A small honest limit is full credit;
-"none really" is not a limit. If a tool genuinely has none you can name, write `none` after
-its label rather than deleting the line.
-
-issue-scout: [where this tool still stops, in plain words, or the word none]
-[tool name]: [where this tool still stops, in plain words, or the word none]
+Codex helped with the implementation and checks. This work taught me to check both the output and the explanation: a successful run is useful, but the evidence needs to show exactly what was verified.
